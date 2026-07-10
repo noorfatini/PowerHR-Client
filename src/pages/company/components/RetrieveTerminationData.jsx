@@ -106,9 +106,11 @@ function RetrieveTerminationData({ completedCount, onMonthLoaded }) {
                             slotProps={{ textField: { size: 'small', sx: { width: 170 } } }}
                         />
                     </LocalizationProvider>
+                    {/* Temporarily hidden: data auto-loads on page load via useEffect above
                     <Button variant="contained" color="primary" onClick={fetchTerminationData}>
                         Retrieve Termination Data
                     </Button>
+                    */}
                 </Stack>
             </Stack>
 

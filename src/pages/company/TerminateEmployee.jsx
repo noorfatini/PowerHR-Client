@@ -1,5 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import EmployeesTable from './components/tableTerminateEmployee';
 import RankEmployeesTable from './components/rankEmployee';
@@ -7,22 +8,27 @@ import RetrieveTerminationData from './components/RetrieveTerminationData';
 
 function TerminateEmployee() {
     const currentMonth = dayjs().format('MMM YYYY');
-    const [completedByMonth, setCompletedByMonth] = useState({});
     const [targetMonth, setTargetMonth] = useState(currentMonth);
     const [requiredCount, setRequiredCount] = useState(0);
+    const employees = useSelector((state) => state.company.employees);
 
-    const completedCount = completedByMonth[targetMonth] || 0;
+    // Derived from real employee records (backend) so it survives refresh,
+    // instead of an in-memory counter that reset on remount. An employee
+    // counts against the month's quota once assigned a termination date in
+    // that month, whether or not the date itself has passed yet.
+    const completedCount = employees.filter((employee) => {
+        if (!employee.terminationDate) return false;
+        return dayjs(employee.terminationDate).format('MMM YYYY') === targetMonth;
+    }).length;
 
     const handleMonthLoaded = useCallback((month, required) => {
         setTargetMonth(month);
         setRequiredCount(required);
     }, []);
 
-    // Terminate button only active when viewing current month and there are pending terminations
-    const canTerminate = targetMonth === currentMonth && requiredCount > 0;
-
-    const handleTerminateSuccess = () =>
-        setCompletedByMonth((prev) => ({ ...prev, [targetMonth]: (prev[targetMonth] || 0) + 1 }));
+    // Terminate button only active when viewing current month, there are pending
+    // terminations, and the month's quota hasn't already been fulfilled
+    const canTerminate = targetMonth === currentMonth && requiredCount > 0 && completedCount < requiredCount;
 
     return (
         <>
@@ -38,7 +44,6 @@ function TerminateEmployee() {
                 </Grid>
                 <Grid item xs={12}>
                     <EmployeesTable
-                        onTerminateSuccess={handleTerminateSuccess}
                         targetMonth={targetMonth}
                         canTerminate={canTerminate}
                     />
@@ -47,7 +52,7 @@ function TerminateEmployee() {
                     <Typography variant="h4" style={{ marginTop: '60px' }}>Run TOPSIS Analysis</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                    <RankEmployeesTable canTerminate={canTerminate} onTerminateSuccess={handleTerminateSuccess} />
+                    <RankEmployeesTable canTerminate={canTerminate} />
                 </Grid>
             </Grid>
         </>

@@ -3,6 +3,7 @@ import {
     FormControl,
     InputLabel,
     MenuItem,
+    Menu,
     IconButton,
     Select,
     Stack,
@@ -20,6 +21,8 @@ import {
     DialogTitle,
     Checkbox,
 } from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { useNavigate } from 'react-router-dom';
 import {
     useGetEmployeesQuery,
     useUpdateEmployeeMutation,
@@ -328,6 +331,9 @@ function RankEmployee({ canTerminate = false, onTerminateSuccess }) {
     // Extract unique roles from employee data
     const availableRoles = [...new Set(employees.map((employee) => employee.jobTitle))];
     const [convertApplicantToEmployee] = useConvertApplicantToEmployeeMutation();
+    const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const openMenu = Boolean(anchorEl);
 
     // Handle role selection change
     const handleRoleChange = (event) => {
@@ -410,6 +416,25 @@ function RankEmployee({ canTerminate = false, onTerminateSuccess }) {
         setConfirmationOpen(true);
     };
 
+    const handleMenuClick = (event, employeeID) => {
+        setAnchorEl(event.currentTarget);
+        const clickedEmployee = employees.find((employee) => employee._id === employeeID);
+        setSelectedEmployee(clickedEmployee);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        setSelectedEmployee(null);
+    };
+
+    const handleManageDocument = (id) => {
+        navigate(`/company/transferknowledge/${id}`);
+    };
+
+    const handleManageFinalSettlement = (id) => {
+        navigate(`/company/settlement/${id}`);
+    };
+
     const dispatch = useDispatch();
 
     const { data, isSuccess } = useGetEmployeesQuery(user.company);
@@ -447,6 +472,17 @@ function RankEmployee({ canTerminate = false, onTerminateSuccess }) {
             dispatch(setEmployees(
                 employees.map(emp => emp._id === selectedEmployee._id ? updatedEmployee : emp)
             ));
+
+            // Keep the TOPSIS results table (a local snapshot) in sync so the
+            // terminated row switches from the Terminate button to the menu
+            // without needing to re-run the analysis.
+            setFilteredEmployees((prev) =>
+                prev.map((emp) =>
+                    emp._id === selectedEmployee._id
+                        ? { ...emp, terminationDate: updatedEmployee.terminationDate }
+                        : emp
+                )
+            );
 
             if (onTerminateSuccess) onTerminateSuccess();
             setSelectedEmployee(null);
@@ -635,29 +671,45 @@ function RankEmployee({ canTerminate = false, onTerminateSuccess }) {
                                         </TableCell>
 
                                         <TableCell align="right">
-                                            <IconButton
-                                                onClick={() => canTerminate && handleTerminateClick(employee._id)}
-                                                disabled={!canTerminate}
-                                                color="error"
-                                                title={!canTerminate ? 'Termination is only available in the current month when required' : ''}
-                                                sx={{
-                                                    border: '2px solid',
-                                                    borderColor: canTerminate ? 'error.main' : 'grey.600',
-                                                    backgroundColor: 'transparent',
-                                                    borderRadius: '8px',
-                                                    padding: '6px',
-                                                    fontSize: '1rem',
-                                                    fontWeight: 'bold',
-                                                    opacity: canTerminate ? 1 : 0.4,
-                                                    cursor: canTerminate ? 'pointer' : 'not-allowed',
-                                                    '&:hover': canTerminate ? {
-                                                        backgroundColor: 'rgba(255, 0, 0, 1)',
-                                                        color: '#1C2536',
-                                                    } : {},
-                                                }}
-                                            >
-                                                Terminate
-                                            </IconButton>
+                                            {(isTerminated || isPendingTermination) ? (
+                                                <>
+                                                    <IconButton onClick={(event) => handleMenuClick(event, employee._id)}>
+                                                        <MoreHorizIcon />
+                                                    </IconButton>
+                                                    <Menu
+                                                        anchorEl={anchorEl}
+                                                        open={openMenu}
+                                                        onClose={handleMenuClose}
+                                                    >
+                                                        <MenuItem onClick={() => handleManageDocument(selectedEmployee._id)}>Manage Document</MenuItem>
+                                                        <MenuItem onClick={() => handleManageFinalSettlement(selectedEmployee._id)}>Manage Final Settlement</MenuItem>
+                                                    </Menu>
+                                                </>
+                                            ) : (
+                                                <IconButton
+                                                    onClick={() => canTerminate && handleTerminateClick(employee._id)}
+                                                    disabled={!canTerminate}
+                                                    color="error"
+                                                    title={!canTerminate ? 'Termination is only available in the current month when required' : ''}
+                                                    sx={{
+                                                        border: '2px solid',
+                                                        borderColor: canTerminate ? 'error.main' : 'grey.600',
+                                                        backgroundColor: 'transparent',
+                                                        borderRadius: '8px',
+                                                        padding: '6px',
+                                                        fontSize: '1rem',
+                                                        fontWeight: 'bold',
+                                                        opacity: canTerminate ? 1 : 0.4,
+                                                        cursor: canTerminate ? 'pointer' : 'not-allowed',
+                                                        '&:hover': canTerminate ? {
+                                                            backgroundColor: 'rgba(255, 0, 0, 1)',
+                                                            color: '#1C2536',
+                                                        } : {},
+                                                    }}
+                                                >
+                                                    Terminate
+                                                </IconButton>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 );

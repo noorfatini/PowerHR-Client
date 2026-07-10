@@ -56,7 +56,7 @@ const AccrualPayStep = ({ selectedEmployee, onCalculate }) => {
                             value={basicSalary}
                             onChange={(e) => setBasicSalary(Number(e.target.value))}
                             InputProps={{
-                                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                startAdornment: <InputAdornment position="start">RM</InputAdornment>
                             }}
                         />
                     </Grid>
@@ -71,7 +71,7 @@ const AccrualPayStep = ({ selectedEmployee, onCalculate }) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6">
-                            Total Accrual Amount: ${accrualAmount.toFixed(2)}
+                            Total Accrual Amount: RM{accrualAmount.toFixed(2)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -113,14 +113,14 @@ const BenefitsPayStep = ({ selectedEmployee, onCalculate }) => {
                                     setBenefits(newBenefits);
                                 }}
                                 InputProps={{
-                                    startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                    startAdornment: <InputAdornment position="start">RM</InputAdornment>
                                 }}
                             />
                         </Grid>
                     ))}
                     <Grid item xs={12}>
                         <Typography variant="h6">
-                            Total Benefits Amount: ${totalBenefits.toFixed(2)}
+                            Total Benefits Amount: RM{totalBenefits.toFixed(2)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -165,13 +165,13 @@ const GratuityPayStep = ({ selectedEmployee, onCalculate }) => {
                             value={basicSalary}
                             onChange={(e) => setBasicSalary(Number(e.target.value))}
                             InputProps={{
-                                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                                startAdornment: <InputAdornment position="start">RM</InputAdornment>
                             }}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="h6">
-                            Total Gratuity Amount: ${gratuityAmount.toFixed(2)}
+                            Total Gratuity Amount: RM{gratuityAmount.toFixed(2)}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -317,12 +317,12 @@ const GenerateDocumentStep = ({ selectedEmployee, calculations, department }) =>
                                 </Typography>
                                 <Grid container spacing={2} sx={{ mb: 3 }}>
                                     <Grid item xs={6}>
-                                        <Typography>Basic Salary: ${documentData.calculations.basicSalary.toFixed(2)}</Typography>
-                                        <Typography>Accrued Leave: ${documentData.calculations.accrualAmount.toFixed(2)}</Typography>
+                                        <Typography>Basic Salary: RM{documentData.calculations.basicSalary.toFixed(2)}</Typography>
+                                        <Typography>Accrued Leave: RM{documentData.calculations.accrualAmount.toFixed(2)}</Typography>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <Typography>Benefits: ${documentData.calculations.totalBenefits.toFixed(2)}</Typography>
-                                        <Typography>Gratuity: ${documentData.calculations.gratuityAmount.toFixed(2)}</Typography>
+                                        <Typography>Benefits: RM{documentData.calculations.totalBenefits.toFixed(2)}</Typography>
+                                        <Typography>Gratuity: RM{documentData.calculations.gratuityAmount.toFixed(2)}</Typography>
                                     </Grid>
                                 </Grid>
 
@@ -337,7 +337,7 @@ const GenerateDocumentStep = ({ selectedEmployee, calculations, department }) =>
                                         fontWeight: 'bold',
                                     }}
                                 >
-                                    Total Settlement: ${(
+                                    Total Settlement: RM{(
                                         documentData.calculations.basicSalary +
                                         documentData.calculations.accrualAmount +
                                         documentData.calculations.totalBenefits +

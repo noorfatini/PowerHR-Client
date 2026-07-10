@@ -92,24 +92,24 @@ function SettlementDocument({ employeeData, calculations }) {
                         </View>
                         <View style={styles.tableRow}>
                             <Text style={styles.tableCell}>Basic Salary</Text>
-                            <Text style={styles.tableCell}>${calculations.basicSalary.toFixed(2)}</Text>
+                            <Text style={styles.tableCell}>RM{calculations.basicSalary.toFixed(2)}</Text>
                         </View>
                         <View style={styles.tableRow}>
                             <Text style={styles.tableCell}>Accrued Leave</Text>
-                            <Text style={styles.tableCell}>${calculations.accrualAmount.toFixed(2)}</Text>
+                            <Text style={styles.tableCell}>RM{calculations.accrualAmount.toFixed(2)}</Text>
                         </View>
                         <View style={styles.tableRow}>
                             <Text style={styles.tableCell}>Benefits</Text>
-                            <Text style={styles.tableCell}>${calculations.totalBenefits.toFixed(2)}</Text>
+                            <Text style={styles.tableCell}>RM{calculations.totalBenefits.toFixed(2)}</Text>
                         </View>
                         <View style={styles.tableRow}>
                             <Text style={styles.tableCell}>Gratuity</Text>
-                            <Text style={styles.tableCell}>${calculations.gratuityAmount.toFixed(2)}</Text>
+                            <Text style={styles.tableCell}>RM{calculations.gratuityAmount.toFixed(2)}</Text>
                         </View>
                         <View style={[styles.tableRow, { fontWeight: 'bold' }]}>
                             <Text style={styles.tableCell}>Total Settlement</Text>
                             <Text style={styles.tableCell}>
-                                ${(
+                                RM{(
                                     calculations.basicSalary +
                                     calculations.accrualAmount +
                                     calculations.totalBenefits +
@@ -125,7 +125,7 @@ function SettlementDocument({ employeeData, calculations }) {
                     {calculations.benefits.map((benefit, index) => (
                         <View key={index} style={styles.row}>
                             <Text style={styles.label}>{benefit.name}:</Text>
-                            <Text style={styles.value}>${benefit.amount.toFixed(2)}</Text>
+                            <Text style={styles.value}>RM{benefit.amount.toFixed(2)}</Text>
                         </View>
                     ))}
                 </View>
